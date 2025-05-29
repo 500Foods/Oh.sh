@@ -1,6 +1,6 @@
 # Oh.sh
 
-
+![ansi](https://github.com/user-attachments/assets/5a9060b9-55c3-4683-843a-fd31c7646667)
 
 ## Key Dependencies
 Almost none. This is a bash script. It uses the usual suspects like sed, awk, grep, cat, and fold to go about its business. 
