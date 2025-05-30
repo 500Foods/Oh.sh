@@ -1,0 +1,36 @@
+[0;34m───────────────────────────────────────────────────────────────────────────────[0m
+[0;34m[1mTest Summary[0m
+[0;34m───────────────────────────────────────────────────────────────────────────────[0m
+Completed at: Tue May  6 12:31:39 PDT 2025
+Summary log: hydrogen/tests/results/test_summary_20250506_122846.log
+
+
+[0;34m[1mIndividual Test Results:[0m
+[0;32m✅ [0m00:00:17[0;32m 10_compilation (1 of 1 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:00[0;32m 12_env_payload (2 of 2 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:02[0;32m 15_startup_shutdown (6 of 6 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:03[0;32m 20_shutdown (5 of 5 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:06[0;32m 25_library_dependencies (16 of 16 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:01[0;32m 35_env_variables (1 of 1 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:00[0;32m 40_json_error_handling (2 of 2 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:26[0;32m 45_signals (5 of 5 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:03[0;32m 50_crash_handler (20 of 20 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:00[0;32m 55_socket_rebind (1 of 1 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:13[0;32m 60_api_prefixes (10 of 10 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:07[0;32m 65_system_endpoints (17 of 17 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:03[0;32m 70_swagger_ui (10 of 10 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:04[0;32m 95_leaks_like_a_sieve (2 of 2 Passed)[0m - Test completed without errors
+[0;32m✅ [0m00:00:24[0;32m 99_codebase (12 of 12 Passed)[0m - Test completed without errors
+
+[0;34m[1mSummary Statistics:[0m
+Total tests: 15
+Passed: 15
+Failed: 0
+Skipped: 0
+Total subtests: 110
+Passed subtests: 110
+Failed subtests: 0
+Test runtime: 2m 53s
+
+[0;32m[1m✅ OVERALL RESULT: ALL TESTS PASSED[0m
+[0;34m───────────────────────────────────────────────────────────────────────────────[0m
