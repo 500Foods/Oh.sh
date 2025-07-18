@@ -2,7 +2,8 @@
 
 # oh.sh - Convert ANSI terminal output to GitHub-compatible SVG
 # 
-# VERSION HISTORY:
+# CHANGELOG
+# 0.026 - Fix XML character escaping in xml_escape function; improve width calculation reporting with auto-width limits
 # 0.025 - Fix --width to enforce grid width and clip lines; add debug logging for clipping
 # 0.024 - Fix syntax error in generate_svg loop; add empty input check; enhance debug logging for cell_width and height truncation
 # 0.023 - Implement grid-based layout for font-agnostic alignment; add --width, --wrap, --height,
@@ -34,12 +35,12 @@
 set -euo pipefail
 
 # Version
-VERSION="0.025"
+VERSION="0.026"
 
 # Default values
 INPUT_FILE=""
 OUTPUT_FILE=""
-HELP=false
+# HELP variable removed as it's unused
 DEBUG=false
 
 # SVG defaults
@@ -247,7 +248,7 @@ parse_arguments() {
 
 xml_escape_url() {
     local input="$1"
-    input="${input//&/&}"
+    input="${input//&/&amp;}"
     echo "$input"
 }
 
@@ -269,12 +270,13 @@ build_font_css() {
 
 xml_escape() {
     local input="$1"
-    input=${input//&/&}
-    input=${input//</<}
-    input=${input//>/>}
-    input=${input//\"/"}
+    # Must escape ampersands first, then other entities
+    input=${input//\&/\&amp;}
+    input=${input//</\&lt;}
+    input=${input//>/\&gt;}
+    input=${input//\"/\&quot;}
     local sq="'"
-    input=${input//$sq/'}
+    input=${input//${sq}/\&apos;}
     echo "$input"
 }
 
@@ -362,7 +364,7 @@ get_visible_line_length() {
     
     parse_ansi_line "$line"
     for segment in "${LINE_SEGMENTS[@]}"; do
-        IFS='|' read -r text fg bg bold pos <<< "$segment"
+        IFS='|' read -r text fg bg bold _ <<< "$segment"
         total_chars=$((total_chars + ${#text}))
     done
     
@@ -428,22 +430,40 @@ read_input() {
 calculate_dimensions() {
     local max_width=0
     local char_count
+    local max_auto_width=120  # Maximum auto-detected width
+    local longest_line_index=-1
     
-    for line in "${INPUT_LINES[@]}"; do
-        char_count=$(get_visible_line_length "$line")
+    for i in "${!INPUT_LINES[@]}"; do
+        char_count=$(get_visible_line_length "${INPUT_LINES[i]}")
         if [[ $char_count -gt $max_width ]]; then
             max_width=$char_count
+            longest_line_index=$i
         fi
     done
     
-    # Always use specified WIDTH, clip lines if needed
-    GRID_WIDTH="$WIDTH"
-    GRID_HEIGHT="$HEIGHT"
+    echo "Content analysis: longest line is $max_width characters (line $((longest_line_index + 1)))" >&2
+    [[ "$DEBUG" == true ]] && echo "  Longest line content: \"${INPUT_LINES[longest_line_index]:0:50}...\"" >&2
     
-    # Warn if clipping will occur
-    if [[ "$WRAP" == false && $max_width -gt $WIDTH ]]; then
-        [[ "$DEBUG" == true ]] && echo "Warning: Lines exceed width $WIDTH (max: $max_width), will clip" >&2
+    # Use actual content width if WIDTH is still the default (80) and content is wider
+    if [[ "$WIDTH" == 80 && $max_width -gt 80 ]]; then
+        if [[ $max_width -gt $max_auto_width ]]; then
+            GRID_WIDTH="$max_auto_width"
+            echo "Auto-detected width limited to $max_auto_width characters (content: $max_width chars)" >&2
+            echo "  Use --width $max_width to display full content width" >&2
+        else
+            GRID_WIDTH="$max_width"
+            echo "Auto-detected width: $max_width characters" >&2
+        fi
+    else
+        GRID_WIDTH="$WIDTH"
+        echo "Using specified width: $WIDTH characters" >&2
+        # Warn if clipping will occur
+        if [[ "$WRAP" == false && $max_width -gt $WIDTH ]]; then
+            echo "Warning: Lines exceed width $WIDTH (max: $max_width), will clip" >&2
+        fi
     fi
+    
+    GRID_HEIGHT="$HEIGHT"
     
     # Ensure minimum dimensions
     [[ "$GRID_WIDTH" -lt 1 ]] && GRID_WIDTH=1
@@ -452,12 +472,13 @@ calculate_dimensions() {
     SVG_WIDTH=$(echo "scale=2; (2 * $PADDING) + ($GRID_WIDTH * $FONT_WIDTH)" | bc)
     SVG_HEIGHT=$(echo "scale=2; (2 * $PADDING) + ($GRID_HEIGHT * $FONT_HEIGHT)" | bc)
     
-    echo "SVG dimensions: ${SVG_WIDTH}x${SVG_HEIGHT} ($GRID_HEIGHT lines, max width: $GRID_WIDTH chars)" >&2
+    echo "SVG dimensions: ${SVG_WIDTH}x${SVG_HEIGHT} ($GRID_HEIGHT lines, grid width: $GRID_WIDTH chars)" >&2
     echo "Font: $FONT_FAMILY ${FONT_SIZE}px (char width: $FONT_WIDTH, line height: $FONT_HEIGHT, weight: $FONT_WEIGHT)" >&2
 }
 
 generate_svg() {
-    local cell_width=$(echo "scale=2; ($SVG_WIDTH - 2 * $PADDING) / $GRID_WIDTH" | bc)
+    local cell_width
+    cell_width=$(echo "scale=2; ($SVG_WIDTH - 2 * $PADDING) / $GRID_WIDTH" | bc)
     [[ "$DEBUG" == true ]] && echo "Cell width: $cell_width pixels" >&2
     
     cat << EOF
@@ -485,7 +506,8 @@ EOF
         [[ "$DEBUG" == true ]] && echo "Processing line $i: ${#line} chars" >&2
         parse_ansi_line "$line"
         
-        local y_offset=$(echo "scale=2; $PADDING + ($FONT_SIZE + ($i * $FONT_HEIGHT))" | bc)
+        local y_offset
+        y_offset=$(echo "scale=2; $PADDING + ($FONT_SIZE + ($i * $FONT_HEIGHT))" | bc)
         
         for segment in "${LINE_SEGMENTS[@]}"; do
             IFS='|' read -r text fg bg bold visible_pos <<< "$segment"
@@ -493,6 +515,10 @@ EOF
             if [[ -n "$text" ]]; then
                 # Clip text if it exceeds grid width
                 local max_chars=$((GRID_WIDTH - visible_pos))
+                if [[ $max_chars -le 0 ]]; then
+                    [[ "$DEBUG" == true ]] && echo "  Skipping text at col $visible_pos (exceeds grid width $GRID_WIDTH)" >&2
+                    continue
+                fi
                 if [[ ${#text} -gt $max_chars ]]; then
                     [[ "$DEBUG" == true ]] && echo "  Clipping text at col $visible_pos: '${text:0:20}'... to $max_chars chars" >&2
                     text="${text:0:$max_chars}"
@@ -502,8 +528,10 @@ EOF
                 local escaped_text
                 escaped_text=$(xml_escape "$text")
                 
-                local current_x=$(echo "scale=2; $PADDING + ($visible_pos * $cell_width)" | bc)
-                local text_width=$(echo "scale=2; ${#text} * $cell_width" | bc)
+                local current_x
+                local text_width
+                current_x=$(echo "scale=2; $PADDING + ($visible_pos * $cell_width)" | bc)
+                text_width=$(echo "scale=2; ${#text} * $cell_width" | bc)
                 [[ "$DEBUG" == true ]] && echo "  Placing text at x=$current_x (col $visible_pos): \"${text:0:20}\"..." "(${#text} chars)" >&2
                 
                 local style_attrs="fill=\"$fg\""
@@ -566,7 +594,7 @@ main() {
     calculate_dimensions
     output_svg
 
-    echo "Version 0.025 complete! 🎯" >&2
+    echo "Version 0.026 complete! 🎯" >&2
 }
 
 main "$@"
