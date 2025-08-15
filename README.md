@@ -73,7 +73,7 @@ ls --color=always -la | ./Oh > output.svg
 command | ./Oh.sh [OPTIONS] > output.svg
 
 # From file
-./Oh.sh [OPTIONS] -i input.txt -o output.svg
+./Oh.sh [OPTIONS] -i output.txt -o output.svg
 ```
 
 ### C Version
