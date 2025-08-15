@@ -50,9 +50,6 @@
 # Basic usage - pipe any command output
 ls --color=always -la | ./Oh.sh > output.svg
 
-# Git diff with custom styling
-git diff --color | ./Oh.sh --font "JetBrains Mono" --font-size 16 -o diff.svg
-
 # Terminal session with specific dimensions
 ./Oh.sh --font Inconsolata --width 120 --wrap -i terminal.txt -o session.svg
 ```
@@ -65,8 +62,6 @@ make
 
 # Same usage as bash version, but faster
 ls --color=always -la | ./Oh > output.svg
-git diff --color | ./Oh --font "JetBrains Mono" --font-size 16 -o diff.svg
-./Oh --font Inconsolata --width 120 --wrap -i terminal.txt -o session.svg
 ```
 
 ## 📖 Usage
@@ -135,53 +130,12 @@ make clean
 | `--tab-size SIZE` | Tab stop size (1-16) | 8 |
 | `--debug` | Enable debug output | false |
 
-## 💡 Examples
-
-### Colorful Directory Listing
-
-```bash
-# Bash version
-ls --color=always -la | ./Oh.sh --font "Fira Code" --font-size 12 > listing.svg
-
-# C version (faster for large outputs)
-ls --color=always -la | ./Oh --font "Fira Code" --font-size 12 > listing.svg
-```
-
-### Git Status with Custom Styling
-
-```bash
-# Bash version
-git status --porcelain --color | ./Oh.sh --font "JetBrains Mono" --width 100 > status.svg
-
-# C version
-git status --porcelain --color | ./Oh --font "JetBrains Mono" --width 100 > status.svg
-```
-
 ### System Information Dashboard
 
 ```bash
 # Both versions support the same syntax
 (echo "=== System Info ===" && uname -a && echo && df -h) | \
 ./Oh.sh --font Inconsolata --font-size 14 --wrap > sysinfo.svg
-```
-
-### Build Output Capture
-
-```bash
-# C version excels at processing large build logs
-npm run build 2>&1 | ./Oh --font "Source Code Pro" --width 120 --height 50 > build.svg
-```
-
-### Performance Comparison
-
-```bash
-# Large file processing - C version shows significant speed advantage
-time ./Oh.sh -i large-terminal-output.txt -o bash-result.svg
-time ./Oh -i large-terminal-output.txt -o c-result.svg
-
-# Both share the same cache for subsequent runs
-./Oh.sh -i large-terminal-output.txt -o test1.svg  # Uses cache from C version
-./Oh -i large-terminal-output.txt -o test2.svg     # Uses cache from bash version
 ```
 
 ## 🔧 Technical Details
@@ -203,7 +157,7 @@ time ./Oh -i large-terminal-output.txt -o c-result.svg
 
 ### ⚡ Intelligent Caching System
 
-Both implementations feature a sophisticated caching system for maximum performance:
+Both implementations share a sophisticated caching system for maximum performance.
 
 #### Cache Types
 
@@ -217,19 +171,6 @@ Both implementations feature a sophisticated caching system for maximum performa
 - **Shared Cache** - Oh.sh and Oh.c use identical cache files interchangeably
 - **Smart Invalidation** - Automatic cache refresh when input or configuration changes
 - **Storage Location** - `~/.cache/Oh/` with organized subdirectories
-
-#### Cache Interoperability
-
-```bash
-# Generate cache with bash version
-./Oh.sh -i large-file.txt -o output1.svg
-
-# C version automatically uses the same cache
-./Oh -i large-file.txt -o output2.svg  # Instant cache hit!
-
-# Cache statistics shown in debug mode
-./Oh --debug -i file.txt  # Shows cache hit/miss ratios
-```
 
 ### Font Support
 

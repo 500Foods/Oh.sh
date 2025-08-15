@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     width="712.00" 
+     height="292.00" 
+     viewBox="0 0 712.00 292.00">
+     
+  <defs>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&amp;display=swap'); .terminal-text { font-family: 'Inconsolata', 'Consolas', 'Monaco', 'Courier New', monospace; } 
+    </style>
+  </defs>
+     
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#1e1e1e" rx="6"/>
+  
+  <!-- Text Content -->
+    <text x="20.00" y="34.00" font-size="14" class="terminal-text" xml:space="preserve" textLength="159.60" lengthAdjust="spacingAndGlyphs" fill="#ffffff">=== System Info ===</text>
+
+    <text x="20.00" y="67.60" font-size="14" class="terminal-text" xml:space="preserve" textLength="613.20" lengthAdjust="spacingAndGlyphs" fill="#ffffff">Filesystem                               Size  Used Avail Use% Mounted on</text>
+
+    <text x="20.00" y="84.40" font-size="14" class="terminal-text" xml:space="preserve" textLength="537.60" lengthAdjust="spacingAndGlyphs" fill="#ffffff">/dev/mapper/fedora_localhost--live-root   49G   45G  1.8G  97% /</text>
+
+    <text x="20.00" y="101.20" font-size="14" class="terminal-text" xml:space="preserve" textLength="562.80" lengthAdjust="spacingAndGlyphs" fill="#ffffff">devtmpfs                                  24G     0   24G   0% /dev</text>
+
+    <text x="20.00" y="118.00" font-size="14" class="terminal-text" xml:space="preserve" textLength="596.40" lengthAdjust="spacingAndGlyphs" fill="#ffffff">tmpfs                                     24G   39M   24G   1% /dev/shm</text>
+
+    <text x="20.00" y="134.80" font-size="14" class="terminal-text" xml:space="preserve" textLength="562.80" lengthAdjust="spacingAndGlyphs" fill="#ffffff">tmpfs                                    9.4G  3.0M  9.4G   1% /run</text>
+
+    <text x="20.00" y="151.60" font-size="14" class="terminal-text" xml:space="preserve" textLength="562.80" lengthAdjust="spacingAndGlyphs" fill="#ffffff">tmpfs                                     24G  182M   24G   1% /tmp</text>
+
+    <text x="20.00" y="168.40" font-size="14" class="terminal-text" xml:space="preserve" textLength="571.20" lengthAdjust="spacingAndGlyphs" fill="#ffffff">/dev/sda1                                974M  291M  617M  33% /boot</text>
+
+    <text x="20.00" y="185.20" font-size="14" class="terminal-text" xml:space="preserve" textLength="621.60" lengthAdjust="spacingAndGlyphs" fill="#ffffff">/dev/md1                                 879G  436G  399G  53% /mnt/speedy</text>
+
+    <text x="20.00" y="202.00" font-size="14" class="terminal-text" xml:space="preserve" textLength="613.20" lengthAdjust="spacingAndGlyphs" fill="#ffffff">/dev/nvme1n1                             938G  733G  158G  83% /mnt/extra</text>
+
+    <text x="20.00" y="218.80" font-size="14" class="terminal-text" xml:space="preserve" textLength="571.20" lengthAdjust="spacingAndGlyphs" fill="#ffffff">/dev/mapper/fedora_localhost--live-home   60G   52G  4.5G  93% /home</text>
+
+    <text x="20.00" y="235.60" font-size="14" class="terminal-text" xml:space="preserve" textLength="646.80" lengthAdjust="spacingAndGlyphs" fill="#ffffff">tmpfs                                    4.7G   24M  4.7G   1% /run/user/1000</text>
+
+    <text x="20.00" y="252.40" font-size="14" class="terminal-text" xml:space="preserve" textLength="630.00" lengthAdjust="spacingAndGlyphs" fill="#ffffff">ceph-fuse                                 92G   11G   82G  12% /mnt/fvl/fst</text>
+
+    <text x="20.00" y="269.20" font-size="14" class="terminal-text" xml:space="preserve" textLength="630.00" lengthAdjust="spacingAndGlyphs" fill="#ffffff">ceph-fuse                                189G   12G  177G   7% /mnt/fvl/slw</text>
+
+</svg>

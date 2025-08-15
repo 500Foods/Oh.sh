@@ -3,7 +3,8 @@
  * C implementation mirroring Oh.sh functionality
  * 
  * CHANGELOG
- * 1.000 - Initial C implementation matching Oh.sh v1.007 functionality
+ * 1.008 - Fixed duplicate version output
+ * 1.007 - Initial C implementation matching Oh.sh v1.007 functionality
  */
 
 #include "Oh.h"
@@ -95,7 +96,7 @@ void progress_output(const char *message) {
 
 // Show version information
 void show_version(void) {
-    fprintf(stderr, "%s   - v%s - Convert ANSI terminal output to GitHub-compatible SVG\n", 
+    fprintf(stderr, "%s   - v%s - Convert ANSI terminal output to SVG\n", 
             SCRIPT_NAME, SCRIPT_VERSION);
 }
 
@@ -603,8 +604,6 @@ int main(int argc, char **argv) {
         show_help();
         return 0;
     }
-    
-    show_version();
     
     if (parse_arguments(argc, argv, &config) != 0) {
         return 1;

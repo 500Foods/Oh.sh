@@ -21,7 +21,7 @@
 
 // MetaData
 #define SCRIPT_NAME "Oh"
-#define SCRIPT_VERSION "1.000"
+#define SCRIPT_VERSION "1.007"
 
 // Configuration constants
 #define MAX_LINE_LENGTH 4096
