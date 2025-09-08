@@ -21,7 +21,7 @@
 
 // MetaData
 #define SCRIPT_NAME "Oh"
-#define SCRIPT_VERSION "1.007"
+#define SCRIPT_VERSION "1.008"
 
 // Configuration constants
 #define MAX_LINE_LENGTH 4096
@@ -145,6 +145,7 @@ int parse_ansi_line(const char *line, const char *line_hash, const char *config_
 int read_input(Config *config);
 void build_font_css(const char *font, char *css_output, size_t css_size);
 int process_lines_single_pass(Config *config, char **svg_output);
+int validate_svg_output(const char *svg_content);
 int output_svg(Config *config);
 
 #endif // OH_H

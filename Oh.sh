@@ -3,7 +3,7 @@
 # oh.sh - Convert ANSI terminal output to GitHub-compatible SVG
 
 # CHANGELOG
-# 1.008 - Fixing shellcheck errors and reducing code size
+# 1.008 - Add SVG DOCTYPE declaration and type="text/css" attribute for SVG 1.1 DTD compliance
 # 1.007 - Implement Phase 6: Testing and validation with comprehensive performance benchmarking
 # 1.006 - Implement Phase 5: Advanced optimizations with SVG fragment caching and incremental processing
 #         Fix critical performance regression by replacing adler32_hash with cksum; optimize hash operations
@@ -46,7 +46,7 @@ set -euo pipefail
 
 # MetaData
 SCRIPT_NAME="Oh.sh"
-SCRIPT_VERSION="1.007"
+SCRIPT_VERSION="1.008"
 SCRIPT_START=$(date +%s.%N)
 
 # Caching 
@@ -919,20 +919,21 @@ process_lines_single_pass() {
     # Assemble final SVG
     cat << EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" 
-     width="${SVG_WIDTH}" 
-     height="${SVG_HEIGHT}" 
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="${SVG_WIDTH}"
+     height="${SVG_HEIGHT}"
      viewBox="0 0 ${SVG_WIDTH} ${SVG_HEIGHT}">
      
   <defs>
-    <style>
+    <style type="text/css">
 $(
     # Separate build_font_css call to avoid masking return value in || condition
     local font_css_output
     # shellcheck disable=SC2310 # Not anticipating failures here
     font_css_output=$(build_font_css "${FONT_FAMILY}") || true
     echo "${font_css_output}"
-) 
+)
     </style>
   </defs>
      

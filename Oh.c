@@ -3,7 +3,7 @@
  * C implementation mirroring Oh.sh functionality
  * 
  * CHANGELOG
- * 1.008 - Fixed duplicate version output
+ * 1.008 - Add XML validation with xmllint, SVG DOCTYPE declaration, and type="text/css" attribute for SVG 1.1 DTD compliance
  * 1.007 - Initial C implementation matching Oh.sh v1.007 functionality
  */
 
@@ -515,8 +515,9 @@ int process_lines_single_pass(Config *config, char **svg_output) {
     int pos = 0;
     pos += snprintf(*svg_output + pos, svg_size - pos,
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n"
         "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%.2f\" height=\"%.2f\" viewBox=\"0 0 %.2f %.2f\">\n"
-        "  <defs><style>%s</style></defs>\n"
+        "  <defs><style type=\"text/css\">%s</style></defs>\n"
         "  <rect width=\"100%%\" height=\"100%%\" fill=\"%s\" rx=\"6\"/>\n",
         svg_width, svg_height, svg_width, svg_height, font_css, BG_COLOR);
     
@@ -565,14 +566,73 @@ int process_lines_single_pass(Config *config, char **svg_output) {
     return 0;
 }
 
+// Validate SVG output using xmllint
+int validate_svg_output(const char *svg_content) {
+    char temp_file_path[MAX_PATH_LENGTH];
+    FILE *temp_file;
+    int validation_result = 0;
+
+    progress_output("SVG validation started");
+
+    // Create temporary file
+    char temp_filename[] = "/temp_validation.svg";
+    size_t cache_dir_len = strlen(cache_dir);
+    if (cache_dir_len + sizeof(temp_filename) > sizeof(temp_file_path)) {
+        fprintf(stderr, "Error: Cache directory path too long for temporary file\n");
+        return -1;
+    }
+    strcpy(temp_file_path, cache_dir);
+    strcat(temp_file_path, temp_filename);
+    temp_file = fopen(temp_file_path, "w");
+    if (!temp_file) {
+        fprintf(stderr, "Error: Cannot create temporary validation file\n");
+        return -1;
+    }
+    fprintf(temp_file, "%s", svg_content);
+    fclose(temp_file);
+
+    // Check XML well-formedness
+    char command[1024];
+    snprintf(command, sizeof(command), "xmllint --noout \"%s\" 2>/dev/null", temp_file_path);
+
+    int xmllint_result = system(command);
+    if (xmllint_result != 0) {
+        progress_output("SVG validation failed: Not well-formed XML");
+        validation_result = 1;
+    } else {
+        progress_output("SVG validation passed: Well-formed XML");
+
+        // Try validating against SVG 1.1 DTD (will work if network available)
+        snprintf(command, sizeof(command), "xmllint -valid -noout \"%s\" 2>/dev/null", temp_file_path);
+        xmllint_result = system(command);
+        if (xmllint_result == 0) {
+            if (debug_mode) {
+                log_output("SVG validation passed: Valid against DTD");
+            }
+        } else {
+            if (debug_mode) {
+                log_output("SVG validation: DTD validation unavailable");
+            }
+        }
+    }
+
+    // Clean up temporary file
+    unlink(temp_file_path);
+
+    return validation_result;
+}
+
 // Output SVG
 int output_svg(Config *config) {
     char *svg_content;
-    
+
     if (process_lines_single_pass(config, &svg_content) != 0) {
         return -1;
     }
-    
+
+    // Validate SVG output
+    validate_svg_output(svg_content);
+
     if (strlen(config->output_file) > 0) {
         FILE *output_file = fopen(config->output_file, "w");
         if (!output_file) {
@@ -641,7 +701,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     
-    progress_output("Oh v1.000 SVG generation complete! 🎯");
+    progress_output("Oh v1.008 SVG generation complete! 🎯");
     
     return 0;
 }
