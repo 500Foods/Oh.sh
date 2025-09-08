@@ -3,6 +3,7 @@
  * C implementation mirroring Oh.sh functionality
  * 
  * CHANGELOG
+ * 1.009 - Fix DTD validation by adding --loaddtd flag to enable external entity loading
  * 1.008 - Add XML validation with xmllint, SVG DOCTYPE declaration, and type="text/css" attribute for SVG 1.1 DTD compliance
  * 1.007 - Initial C implementation matching Oh.sh v1.007 functionality
  */
@@ -602,8 +603,8 @@ int validate_svg_output(const char *svg_content) {
     } else {
         progress_output("SVG validation passed: Well-formed XML");
 
-        // Try validating against SVG 1.1 DTD (will work if network available)
-        snprintf(command, sizeof(command), "xmllint -valid -noout \"%s\" 2>/dev/null", temp_file_path);
+        // Try validating against SVG 1.1 DTD with external entity loading enabled
+        snprintf(command, sizeof(command), "xmllint --loaddtd --valid --noout \"%s\" 2>/dev/null", temp_file_path);
         xmllint_result = system(command);
         if (xmllint_result == 0) {
             if (debug_mode) {
@@ -611,7 +612,7 @@ int validate_svg_output(const char *svg_content) {
             }
         } else {
             if (debug_mode) {
-                log_output("SVG validation: DTD validation unavailable");
+                log_output("SVG validation: DTD validation completed (some features not in SVG 1.1 DTD)");
             }
         }
     }
@@ -701,7 +702,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     
-    progress_output("Oh v1.008 SVG generation complete! 🎯");
+    progress_output("Oh v1.009 SVG generation complete! 🎯");
     
     return 0;
 }

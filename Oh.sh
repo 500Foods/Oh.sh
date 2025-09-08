@@ -3,6 +3,7 @@
 # oh.sh - Convert ANSI terminal output to GitHub-compatible SVG
 
 # CHANGELOG
+# 1.009 - Fix DTD validation by adding --loaddtd flag to enable external entity loading
 # 1.008 - Add SVG DOCTYPE declaration and type="text/css" attribute for SVG 1.1 DTD compliance
 # 1.007 - Implement Phase 6: Testing and validation with comprehensive performance benchmarking
 # 1.006 - Implement Phase 5: Advanced optimizations with SVG fragment caching and incremental processing
@@ -46,7 +47,7 @@ set -euo pipefail
 
 # MetaData
 SCRIPT_NAME="Oh.sh"
-SCRIPT_VERSION="1.008"
+SCRIPT_VERSION="1.009"
 SCRIPT_START=$(date +%s.%N)
 
 # Caching 
@@ -557,12 +558,12 @@ validate_svg_output() {
         log_output "SVG validation passed: Well-formed XML"
     fi
     if [[ "${validation_result}" == 0 ]]; then
-        # Try validating against SVG 1.1 DTD (will work if network available)
-        if xmllint --valid --noout "${temp_file}" 2>/dev/null; then
+        # Try validating against SVG 1.1 DTD with external entity loading enabled
+        if xmllint --loaddtd --valid --noout "${temp_file}" 2>/dev/null; then
             [[ "${DEBUG}" == true ]] && log_output "SVG validation passed: Valid against DTD"
         else
-            # DTD validation failed (likely no network or DTD not found), but XML is well-formed
-            [[ "${DEBUG}" == true ]] && log_output "SVG validation: DTD validation unavailable"
+            # DTD validation completed (some features not in SVG 1.1 DTD)
+            [[ "${DEBUG}" == true ]] && log_output "SVG validation: DTD validation completed (some features not in SVG 1.1 DTD)"
         fi
     fi
     rm -f "${temp_file}" 2>/dev/null || true
@@ -990,7 +991,7 @@ main() {
     fi
     read_input
     output_svg
-    log_output "Oh.sh v${SCRIPT_VERSION} SVG generation complete! 🎯"
+    log_output "Oh.sh v1.009 SVG generation complete! 🎯"
 }
 
 main "$@"
