@@ -266,22 +266,22 @@ Your feedback helps shape the future of Oh.sh!
 [![Count Lines of Code](https://github.com/500Foods/Oh.sh/actions/workflows/main.yml/badge.svg)](https://github.com/500Foods/Oh.sh/actions/workflows/main.yml)
 <!--CLOC-START -->
 ```cloc
-Last updated at 2025-09-08 01:11:19 UTC
+Last updated at 2025-09-08 17:34:47 UTC
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-C                                3            203            119           1151
-Bourne Shell                     1             58             71            867
+C                                3            203            120           1151
+Bourne Shell                     1             58             72            867
+SVG                              1              0              0            562
 Markdown                         1             81              2            210
 C/C++ Header                     1             14             15            122
-SVG                              1              0              0             81
 make                             1             13             13             39
 YAML                             2              8             13             37
 -------------------------------------------------------------------------------
-SUM:                            10            377            233           2507
+SUM:                            10            377            235           2988
 -------------------------------------------------------------------------------
-4 Files were skipped (duplicate, binary, or without source code):
-  ansi: 1
+5 Files were skipped (duplicate, binary, or without source code):
+  ansi: 2
   gitattributes: 1
   gitignore: 1
   license: 1
