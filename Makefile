@@ -37,12 +37,16 @@ debug: $(TARGET)
 
 # Test with sample file
 test: $(TARGET)
-	./$(TARGET) -i sample.txt -o test_output.svg
+	./$(TARGET) -i sample.ansi -o test_output.svg
+
+# Run bats tests
+bats-test: $(TARGET)
+	bats tests/oh.bats
 
 # Compare output with bash version
 compare: $(TARGET)
-	./Oh.sh -i sample.txt -o bash_output.svg
-	./$(TARGET) -i sample.txt -o c_output.svg
+	./Oh.sh -i sample.ansi -o bash_output.svg
+	./$(TARGET) -i sample.ansi -o c_output.svg
 	@echo "Generated bash_output.svg and c_output.svg for comparison"
 
 # Clean cache for fresh testing
@@ -57,9 +61,10 @@ help:
 	@echo "  install    - Install to /usr/local/bin"
 	@echo "  uninstall  - Remove from /usr/local/bin"
 	@echo "  debug      - Build with debug symbols"
-	@echo "  test       - Test with sample.txt"
+	@echo "  test       - Test with sample.ansi"
+	@echo "  bats-test  - Run bats test suite"
 	@echo "  compare    - Compare C vs Bash output"
 	@echo "  clean-cache- Clean cache directory"
 	@echo "  help       - Show this help"
 
-.PHONY: all clean install uninstall debug test compare clean-cache help
+.PHONY: all clean install uninstall debug test bats-test compare clean-cache help
